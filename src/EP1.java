@@ -165,8 +165,18 @@ class Matriz {
 
         // TODO: implementar este metodo.
 
+        Matriz i = identidade(agregada.lin);
 
-        int[] pivots = encontraLinhaPivo(1);
+        //fase de eliminação
+            //forma aumentada
+                //tranformações elementares
+        for(int j = 0; j < this.col; j++){
+            int[] pivos = encontraLinhaPivo(j);
+
+        }
+        int[] pivos = encontraLinhaPivo(1);
+
+        //fase de substituição
 
         return 0.0;
     }
@@ -192,7 +202,7 @@ public class EP1 {
     public static void main(String [] args){
 
         Scanner in = new Scanner(System.in);	// Scanner para facilitar a leitura de dados a partir da entrada padrao.
-        String operacao = in.next();		// le, usando o scanner, a string que determina qual operacao deve ser realizada.
+        String operacao = in.nextLine();		// le, usando o scanner, a string que determina qual operacao deve ser realizada.
         int n = in.nextInt();			// le a dimensão da matriz a ser manipulada pela operacao escolhida.
 
         // TODO: completar este metodo.
@@ -201,13 +211,17 @@ public class EP1 {
 
         for(int i = 0; i < n; i++){
             for(int j = 0; j < n; j++){
-                n = in.nextInt();
-                m.set(i, j, n);
+                int nTemp = in.nextInt();
+                m.set(i, j, nTemp);
             }
         }
+        m.imprime();
+
 
         if("resolve".equals(operacao)){
             System.out.println("Resolver");
+            Matriz i = new Matriz(n, n);
+            m.formaEscalonada(i);
         }
         else if("inverte".equals(operacao)){
             System.out.println("Inverter");
