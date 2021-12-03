@@ -1,5 +1,7 @@
 import java.util.*;
 
+import static java.lang.Math.pow;
+
 // classe que representa uma matriz de valores do tipo double.
 
 class Matriz {
@@ -122,7 +124,7 @@ class Matriz {
     private void combinaLinhas(int i1, int i2, double k){
 
         for(int i = 0; i < this.m[0].length; i++){
-            this.m[i1-1][i] = (this.m[i1-1][i] + (this.m[i2-1][i] * k));
+            this.m[i1][i] = (this.m[i1][i] + (this.m[i2][i] * k));
         }
     }
 
@@ -155,6 +157,37 @@ class Matriz {
         return new int [] { pivo_lin, pivo_col };
     }
 
+    public double cofator(Matriz m, double l, double c) {
+        Matriz temp = new Matriz(this.lin, this.col);
+        
+        int x = 0, y = 0;
+        for(int i = 0; i < this.m.length; i++){
+            for(int j = 0; j < this.m.length; j++){
+                if(i != l && j != c){
+                    temp.set(x, y, m[i][j]);
+                    y++;
+                    if(y == this.m.length-1){
+                        y = 0;
+                        x++;
+                    }
+                }
+            }
+        }
+        return pow(-1.0, l + c) * determinante(temp);
+    }
+
+    public double determinante(Matriz m) {
+        double det = 0;
+
+        if(this.m.length == 1)
+            return this.m[0][0];
+        else
+            for(int i = 0; i < this.m.length; i++)
+                det += this.m[0][i] * cofator(m,0, i);
+
+        return det;
+    }
+
     // metodo que implementa a eliminacao gaussiana, que coloca a matriz (que chama o metodo)
     // na forma escalonada. As operacoes realizadas para colocar a matriz na forma escalonada
     // tambem devem ser aplicadas na matriz "agregada" caso esta seja nao nula. Este metodo
@@ -165,18 +198,18 @@ class Matriz {
 
         // TODO: implementar este metodo.
 
-        Matriz i = identidade(agregada.lin);
+        this.imprime(agregada);
+        System.out.println();
 
-        //fase de eliminação
-            //forma aumentada
-                //tranformações elementares
-        for(int j = 0; j < this.col; j++){
-            int[] pivos = encontraLinhaPivo(j);
-
+        for(int k = 0; k < this.m.length-1; k++){
+            for(int i = k+1; i < this.m.length; i++){
+                double fatorMultiplicador = m[i][k]/m[k][k];
+                this.combinaLinhas(i, k, -fatorMultiplicador);
+                agregada.combinaLinhas(i, k, fatorMultiplicador);
+                this.imprime();
+                System.out.println();
+            }
         }
-        int[] pivos = encontraLinhaPivo(1);
-
-        //fase de substituição
 
         return 0.0;
     }
@@ -215,13 +248,11 @@ public class EP1 {
                 m.set(i, j, nTemp);
             }
         }
-        m.imprime();
-
 
         if("resolve".equals(operacao)){
             System.out.println("Resolver");
-            Matriz i = new Matriz(n, n);
-            m.formaEscalonada(i);
+            Matriz a = new Matriz(3,1);
+            m.formaEscalonada(a);
         }
         else if("inverte".equals(operacao)){
             System.out.println("Inverter");
