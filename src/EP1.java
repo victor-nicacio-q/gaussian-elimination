@@ -214,6 +214,7 @@ class Matriz {
         System.out.println();
 
         for(int k = 0; k < this.m.length-1; k++){
+            int[] pivo = encontraLinhaPivo(k);
             for(int i = k+1; i < this.m.length; i++){
                 double fatorMultiplicador = this.get(i, k)/this.get(k, k);
                 this.combinaLinhas(i, k, -fatorMultiplicador);
@@ -224,13 +225,7 @@ class Matriz {
             }
         }
 
-        double det = this.determinante();
-
-        if(Math.abs(det) - Math.abs(Math.floor(det)) < SMALL)
-            det = Math.floor(det);
-            System.out.println("det(M) = " + det);
-
-        return det;
+        return this.determinante();
     }
 
     // metodo que implementa a eliminacao de Gauss-Jordan, que coloca a matriz (que chama o metodo)
@@ -241,6 +236,12 @@ class Matriz {
 
     public void formaEscalonadaReduzida(Matriz agregada){
         Matriz temp = this.inversa();
+
+        //formaEscalonada(agregada);
+
+        for(int k = 0; k < this.lin; k++){
+            int[] pivo = encontraLinhaPivo(k);
+        }
 
         temp.imprime();
     }
@@ -257,8 +258,6 @@ public class EP1 {
         Scanner in = new Scanner(System.in);	// Scanner para facilitar a leitura de dados a partir da entrada padrao.
         String operacao = in.nextLine();		// le, usando o scanner, a string que determina qual operacao deve ser realizada.
         int n = in.nextInt();			// le a dimensão da matriz a ser manipulada pela operacao escolhida.
-
-        // TODO: completar este metodo.
 
         Matriz m = new Matriz(n, n);
         for(int i = 0; i < n; i++){
@@ -281,7 +280,10 @@ public class EP1 {
         System.out.println();
 
         if("resolve".equals(operacao)){
-            m.formaEscalonada(a);
+            double det = m.formaEscalonada(a);
+            if(Math.abs(det) - Math.abs(Math.floor(det)) < Matriz.SMALL)
+                det = Math.floor(det);
+            System.out.println("det(M) = " + det);
         }
         else if("inverte".equals(operacao)){
             m.formaEscalonadaReduzida(a);
