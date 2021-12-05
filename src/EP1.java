@@ -157,14 +157,14 @@ class Matriz {
         return new int [] { pivo_lin, pivo_col };
     }
 
-    public double cofator(Matriz m, double l, double c) {
-        Matriz temp = new Matriz(this.lin, this.col);
-        
+    public double cofator(double l, double c) {
+        Matriz temp = new Matriz(this.lin-1 , this.col-1);
+
         int x = 0, y = 0;
-        for(int i = 0; i < this.m.length; i++){
-            for(int j = 0; j < this.m.length; j++){
+        for(int i = 0; i < this.lin; i++){
+            for(int j = 0; j < this.col; j++){
                 if(i != l && j != c){
-                    temp.set(x, y, m[i][j]);
+                    temp.set(x, y, this.get(i, j));
                     y++;
                     if(y == this.m.length-1){
                         y = 0;
@@ -173,19 +173,34 @@ class Matriz {
                 }
             }
         }
-        return pow(-1.0, l + c) * determinante(temp);
+        return (int) pow(-1.0, l + c) * temp.determinante();
     }
 
-    public double determinante(Matriz m) {
+    public double determinante() {
         double det = 0;
 
-        if(this.m.length == 1)
+        if(this.lin == 1 && this.col == 1)
             return this.m[0][0];
         else
             for(int i = 0; i < this.m.length; i++)
-                det += this.m[0][i] * cofator(m,0, i);
+                det += this.get(0, i) * cofator(0, i);
 
         return det;
+    }
+
+    public Matriz inversa() {
+        Matriz temp = new Matriz(this.lin, this.col);
+
+        for(int i = 0; i < this.lin; i++){
+            for(int j = 0; j < this.col; j++){
+                if(i == j)
+                    temp.set(i, j, 1.0);
+                else
+                    temp.set(i, j, 0.0);
+            }
+        }
+
+        return temp;
     }
 
     // metodo que implementa a eliminacao gaussiana, que coloca a matriz (que chama o metodo)
@@ -195,23 +210,27 @@ class Matriz {
     // que a matriz que invoca este metodo eh uma matriz quadrada.
 
     public double formaEscalonada(Matriz agregada){
-
-        // TODO: implementar este metodo.
-
         this.imprime(agregada);
         System.out.println();
 
         for(int k = 0; k < this.m.length-1; k++){
             for(int i = k+1; i < this.m.length; i++){
-                double fatorMultiplicador = m[i][k]/m[k][k];
+                double fatorMultiplicador = this.get(i, k)/this.get(k, k);
                 this.combinaLinhas(i, k, -fatorMultiplicador);
-                agregada.combinaLinhas(i, k, fatorMultiplicador);
-                this.imprime();
+                if(agregada != null)
+                    agregada.combinaLinhas(i, k, fatorMultiplicador);
+                this.imprime(agregada);
                 System.out.println();
             }
         }
 
-        return 0.0;
+        double det = this.determinante();
+
+        if(Math.abs(det) - Math.abs(Math.floor(det)) < SMALL)
+            det = Math.floor(det);
+            System.out.println("det(M) = " + det);
+
+        return det;
     }
 
     // metodo que implementa a eliminacao de Gauss-Jordan, que coloca a matriz (que chama o metodo)
@@ -221,8 +240,9 @@ class Matriz {
     // matriz ja esteja na forma escalonada (mas voce pode usar o metodo acima para isso).
 
     public void formaEscalonadaReduzida(Matriz agregada){
+        Matriz temp = this.inversa();
 
-        // TODO: implementar este metodo.
+        temp.imprime();
     }
 }
 
@@ -241,7 +261,6 @@ public class EP1 {
         // TODO: completar este metodo.
 
         Matriz m = new Matriz(n, n);
-
         for(int i = 0; i < n; i++){
             for(int j = 0; j < n; j++){
                 int nTemp = in.nextInt();
@@ -249,16 +268,25 @@ public class EP1 {
             }
         }
 
+        System.out.println();
+        Matriz a = new Matriz(n,1);
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < 1; j++){
+                int nTemp = in.nextInt();
+                a.set(i, j, nTemp);
+            }
+        }
+
+        m.imprime(a);
+        System.out.println();
+
         if("resolve".equals(operacao)){
-            System.out.println("Resolver");
-            Matriz a = new Matriz(3,1);
             m.formaEscalonada(a);
         }
         else if("inverte".equals(operacao)){
-            System.out.println("Inverter");
+            m.formaEscalonadaReduzida(a);
         }
         else if("determinante".equals(operacao)){
-            System.out.println("Determinando");
             m.imprimeDeterminante();
         }
         else {
