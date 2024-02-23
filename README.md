@@ -1,4 +1,4 @@
-* ** Codigo em Java que implementa o método de eliminação de Gauss para se encontrar a solução do sistema
+***Codigo em Java que implementa o método de eliminação de Gauss para se encontrar a solução do sistema.**
 <Seja Ax = b um sistema linear>
 
 A eliminação de Gauss, ou método de escalonamento, é um algoritmo para se resolver sistemas de equações lineares. 
